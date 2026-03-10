@@ -5,6 +5,7 @@ import {
 } from "./directory-ignorer.js";
 import { fastGlob } from "./prettier-internal.js";
 import { lstatSafe, normalizeToPosix } from "./utilities.js";
+import fs from "node:fs/promises";
 
 /** @import {Context} from './context.js' */
 
