@@ -1,5 +1,5 @@
 {
-  "name": "prettier",
+  "name": "@zen-browser/prettier",
   "version": "3.9.0-dev",
   "description": "Prettier is an opinionated code formatter",
   "bin": "./bin/prettier.cjs",
