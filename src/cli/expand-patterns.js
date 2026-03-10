@@ -71,12 +71,29 @@ async function* expandPatternsInternal(context) {
     const stat = await lstatSafe(absolutePath);
     if (stat) {
       if (stat.isSymbolicLink()) {
-        entries.push({
-          type: "file",
-          glob: escapePathForGlob(fixWindowsSlashes(pattern)),
-          input: pattern,
-          ignoreUnknown: true,
-        });
+        // Follow symlink if it's not ignored, otherwise skip it. This is consistent with how `fast-glob` handles symlinks.
+        const realPath = await fs.realpath(absolutePath);
+        if (directoryIgnorer.shouldIgnore(realPath)) {
+          continue;
+        }
+
+        const realStat = await lstatSafe(realPath);
+        if (realStat?.isFile()) {
+          entries.push({
+            type: "file",
+            glob: escapePathForGlob(fixWindowsSlashes(pattern)),
+            input: pattern,
+          });
+        } else if (realStat?.isDirectory()) {
+          const relativePath = path.relative(cwd, realPath) || ".";
+          const prefix = escapePathForGlob(fixWindowsSlashes(relativePath));
+          entries.push({
+            type: "dir",
+            glob: `${prefix}/**/*`,
+            input: pattern,
+            ignoreUnknown: true,
+          });
+        }
       } else if (stat.isFile()) {
         entries.push({
           type: "file",
