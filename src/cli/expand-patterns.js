@@ -55,7 +55,7 @@ async function* expandPatternsInternal(context) {
   const globOptions = {
     dot: true,
     ignore: [...directoryIgnorer.ignorePatterns],
-    followSymbolicLinks: false,
+    followSymbolicLinks: true,
   };
   const cwd = process.cwd();
 
